@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burger</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td {
+            border: 1px solid black;
+            padding: 10px;
+            vertical-align: top;
+            white-space: pre-wrap;
+            font-family: monospace;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+<table>
+    <tr>
+        <td>
+            from calculate_bill import calc
+            import data1
+            
+            def main():
+                try:
+                    amount = float(input("Please enter your amount loan (RM): "))
+                    
+                    print(f"\n---- Fill the information ----")
+                    name = input("Name: ")
+                    ic = input("IC Number: ")
+                    salary = float(input("Salary per month (RM): "))
+                    
+                    if amount >= 100000:
+                        raise ValueError("your amount request over limit.")
+                    
+                    loan = calc(salary,amount)
+                    print(f"\n---- Loan status ----")
+                    print(f"Loan egibility (RM): {loan:.2f} ")
+                    print(f"Congrats, you are eligible to apply loan")
+            
+                    yesno = input("Do you want to apply loan? (YES/NO): ")
+                    if yesno.upper() == "NO":
+                        print(f"Record not inserted")
+                    else:
+                        print(f"Record are inserted")
+                        data1.insert(name)
+                        with open("loan.txt","a") as file:
+                            file.write(f"\nName: {name}")
+                            file.write(f"\nIC: {ic}")
+                            file.write(f"\nSalary: {salary}")
+                except ValueError as e:
+                    print(f"Sorry!!! {e}")
+                
+                
+            
+            if __name__ == "__main__":
+                data1.create_db()
+                main()
+        </td>
+    </tr>
+    <tr>
+        <td>
+            import mysql.connector
+
+def create_db():
+    try:
+        with mysql.connector.connect(host='localhost', user='root', password='') as db:
+            cursor = db.cursor()
+            cursor.execute("CREATE DATABASE IF NOT EXISTS salary2")
+            cursor.execute("USE salary2")
+            cursor.execute('''CREATE TABLE IF NOT EXISTS price(
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            name VARCHAR(255)) ''')
+            db.commit() 
+    except mysql.connector.Error as e:
+        print(f"Error: {e}")
+
+def insert(name):
+    try:
+        with mysql.connector.connect(host='localhost', user='root', password='', database='salary2') as db:
+            cursor = db.cursor()
+            cursor.execute('''INSERT INTO price(name)
+                           VALUES(%s)''', (name,))
+            db.commit()  
+            print("Record inserted successfully.") 
+    except mysql.connector.Error as e:
+        print(f"Error: {e}")
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            import tkinter as tk
+from tkinter import messagebox
+from calculate_bill import calc
+import data1
+
+def calc():
+    try:
+        amount = float(amount_entry.get())
+        name = name_entry.get()
+        ic = ic_entry.get()
+        salary = float(salary_entry.get())
+        
+        if amount >= 100000:
+            raise ValueError("Your amount request is over the limit.")
+        
+        loan = calc(salary, amount)
+        messagebox.showinfo("Loan Status", f"Loan eligibility (RM): {loan:.2f}\nCongrats, you are eligible to apply for the loan.")
+        
+        yesno = messagebox.askyesno("Apply Loan", "Do you want to apply for the loan?")
+        
+        if yesno:
+            data1.insert(name)
+            with open("loan.txt", "a") as file:
+                file.write(f"\nName: {name}\nIC: {ic}\nSalary: {salary}\n")
+            messagebox.showinfo("Success", "Record inserted successfully.")
+        else:
+            messagebox.showinfo("Cancelled", "Record not inserted.")
+    except ValueError as e:
+        messagebox.showerror("Error", str(e))
+
+root = tk.Tk()
+root.title("Loan Application")
+
+tk.Label(root, text="Amount Loan (RM):").grid(row=0, column=0, padx=10, pady=5, sticky="e")
+amount_entry = tk.Entry(root)
+amount_entry.grid(row=0, column=1, padx=10, pady=5)
+
+tk.Label(root, text="Name:").grid(row=1, column=0, padx=10, pady=5, sticky="e")
+name_entry = tk.Entry(root)
+name_entry.grid(row=1, column=1, padx=10, pady=5)
+
+tk.Label(root, text="IC Number:").grid(row=2, column=0, padx=10, pady=5, sticky="e")
+ic_entry = tk.Entry(root)
+ic_entry.grid(row=2, column=1, padx=10, pady=5)
+
+tk.Label(root, text="Salary per month (RM):").grid(row=3, column=0, padx=10, pady=5, sticky="e")
+salary_entry = tk.Entry(root)
+salary_entry.grid(row=3, column=1, padx=10, pady=5)
+
+apply_button = tk.Button(root, text="Apply Loan", command=calc)
+apply_button.grid(row=4, columnspan=2, padx=10, pady=10)
+
+root.mainloop()
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            def calc(amount,salary):
+    loan=0.0
+
+    if salary > 5000 and salary <=8000:
+        loan= amount-(amount-(amount*0.7))
+    elif salary > 3000 and salary <=5000:
+        loan= amount-(amount-(amount*0.5))
+    elif salary < 3000:
+        loan= amount-(amount-(amount*0.3))
+    else:
+        loan= amount-(amount-(amount*1))
+    return loan
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            def harga(kwh):
+    bill=0.0
+    if kwh <=200:
+        bill = kwh * (21.80/100)
+    elif kwh <= 300:
+        bill = 200 *0.218 + (kwh-200*0.3340)
+    else:
+        bill = 200*0.218 + (100*0.334)+ (kwh-300*0.516)
+    return bill
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            import tkinter as tk
+from tkinter import messagebox,ttk
+from calculate_bill import harga
+import data
+
+def calc():
+    try:
+        num1 = float(entry_num1.get())
+        num2 = float(entry_num2.get())
+        if num2 < num1:
+            raise ValueError("Tak boleh kurang")
+        
+        kwh = int(num2 - num1)
+        if kwh < 0:
+            raise ValueError("Tak boleh negative")
+
+        bill = harga(kwh)
+        name = name_var.get()
+        gender = gender_var.get()
+        food = food_var.get()
+        
+        data.db(name,num1, num2, kwh, bill, gender, food)
+        
+        with open("bill.txt", "a") as file:
+            file.write(f"Name: {name}\n")
+            file.write(f"First Bill: {num1}\n")
+            file.write(f"Second Bill: {num2}\n")
+            file.write(f"Total kWh: {kwh}\n")
+            file.write(f"Bill: RM {bill:.2f}\n")
+            file.write(f"Gender: {gender}\n")
+            file.write(f"Food: {food}\n")
+            file.write("\n")
+        
+        messagebox.showinfo("Success", "Success submit") 
+    except ValueError as e:
+        messagebox.showerror("Invalid input", str(e))
+
+
+def main():
+    global name_var, entry_num1, entry_num2, gender_var, food_var
+
+    root = tk.Tk()
+    
+    name_var = tk.Entry(root)
+    name_var.grid(row=0, column=1, padx=10, pady=10)
+  
+    entry_num1 = tk.Entry(root)
+    entry_num1.grid(row=1, column=1, padx=10, pady=10)
+    
+    entry_num2 = tk.Entry(root)
+    entry_num2.grid(row=2, column=1, padx=10, pady=10)
+
+    gender_var = tk.StringVar(value="Male")
+    tk.Radiobutton(root, text="Male", variable=gender_var, value="Male").grid(row=3, column=1, padx=10, pady=10)
+    tk.Radiobutton(root, text="Female", variable=gender_var, value="Female").grid(row=3, column=2, padx=10, pady=10)
+    
+    food_var = tk.StringVar()
+    food_combobox = ttk.Combobox(root, textvariable=food_var)
+    food_combobox['values'] = ("Food 1", "Food 2")
+    food_combobox.grid(row=4, column=1, padx=10, pady=10)
+
+    tk.Button(root, text="Submit", command=calc).grid(row=5, column=0, columnspan=3, pady=20)
+
+    root.mainloop()
+
+if __name__ == "__main__":
+    data.create_db()
+    main()
+        </td>
+    </tr>
+</table>
+</body>
+</html>
+
